@@ -16,15 +16,32 @@ namespace docxParsingUI
 {
     public partial class Form1 : Form
     {
+        /// <summary>
+        /// Contient le chemin du fichier de modèle LC
+        /// </summary>
         private string fichierModele;
+
+        /// <summary>
+        /// Contient le chemin du fichier avec les informations sur l'entreprise du client
+        /// </summary>
         private string fichierDonnees;
+
+        /// <summary>
+        /// Contient le chemin du fichier de destination
+        /// </summary>
         private string fichierDestination;
+
+        /// <summary>
+        /// Les informations du client y sont stockées 
+        /// </summary>
         private Dictionary<string, string> donnees = new Dictionary<string, string>();
         public Form1()
         {
             InitializeComponent();
         }
-
+        /// <summary>
+        /// Ouvre une boîte de dialogue pour sélectionner le fichier de données client
+        /// </summary>
         private void parcourirSourceDonnees_Click(object sender, EventArgs e)
         {
             OpenFileDialog ouvrirSourceDonnees = new OpenFileDialog();
@@ -38,6 +55,9 @@ namespace docxParsingUI
 
         }
 
+        /// <summary>
+        /// Ouvre une boîte de dialogue pour sélectionner le fichier de modèle LC
+        /// </summary>
         private void parcourirModele_Click(object sender, EventArgs e)
         {
             OpenFileDialog ouvrirModele = new OpenFileDialog();
@@ -50,6 +70,9 @@ namespace docxParsingUI
             }
         }
 
+        /// <summary>
+        /// Ouvre une boîte de dialogue pour sélectionner le fichier de destination et le créer s'il n'existe pas
+        /// </summary>
         private void parcourirDestination_Click(object sender, EventArgs e)
         {
             SaveFileDialog ouvrirDestination = new SaveFileDialog();
@@ -62,6 +85,9 @@ namespace docxParsingUI
             }
         }
 
+        /// <summary>
+        /// Extrait les données du fichier client
+        /// </summary>
         private void recupererDonneesExcel(string chemin)
         {
             using (var stream = File.Open(chemin, FileMode.Open, FileAccess.Read))
@@ -78,30 +104,49 @@ namespace docxParsingUI
             }
         }
 
+        /// <summary>
+        /// Génère la LC
+        /// </summary>
         private void boutonGenerer_Click(object sender, EventArgs e)
         {
             genererLC();
         }
 
+        /// <summary>
+        /// Efface les champs
+        /// </summary>
         private void boutonEffacer_Click(object sender, EventArgs e)
         {
             effacerChamps();
         }
 
+        /// <summary>
+        /// Génère la LC
+        /// </summary>
         private void générerToolStripMenuItem_Click(object sender, EventArgs e)
         {
             genererLC();
         }
 
+        /// <summary>
+        /// Efface  les champs
+        /// </summary>
         private void effacerToolStripMenuItem_Click(object sender, EventArgs e)
         {
             effacerChamps();
         }
 
+        /// <summary>
+        /// Permet de quitter l'application
+        /// </summary>
         private void quitterToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
         }
+
+        /// <summary> 
+        /// Fonction de génération d'une LC
+        /// </summary>
         private void genererLC()
         {
             fichierModele = sourceModele.Text;
@@ -125,6 +170,10 @@ namespace docxParsingUI
 
             donnees.Clear();
         }
+
+        /// <summary>
+        /// Affiche une boîte de dialogue et efface les champs
+        /// </summary>
         private void effacerChamps()
         {
             if (MessageBox.Show("Voulez-vous vraiment effacer tous les champs ?", "Confirmation",
@@ -136,6 +185,9 @@ namespace docxParsingUI
             }
         }
 
+        /// <summary>
+        /// Récupère une valeur du Dictionnary en fonction de la clé
+        /// </summary>
         private string ChercheValeur(string key)
         {
             if(donnees.ContainsKey(key))
