@@ -45,7 +45,7 @@ namespace docxParsingUI
         private void parcourirSourceDonnees_Click(object sender, EventArgs e)
         {
             OpenFileDialog ouvrirSourceDonnees = new OpenFileDialog();
-            //ouvrirSourceDonnees.Filter = "Documents Excel (*.xlsx)|*.xslx";
+            ouvrirSourceDonnees.Filter = "Documents Excel (*.xlsx)|*.xlsx";
             ouvrirSourceDonnees.Title = "Sélectionner une source de données";
 
             if (ouvrirSourceDonnees.ShowDialog() == System.Windows.Forms.DialogResult.OK)
