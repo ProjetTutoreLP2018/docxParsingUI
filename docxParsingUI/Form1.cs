@@ -35,7 +35,6 @@ namespace docxParsingUI
         /// Les informations du client y sont stockées 
         /// </summary>
         private Dictionary<string, string> donnees = new Dictionary<string, string>();
-
         public Form1()
         {
             InitializeComponent();
@@ -91,7 +90,6 @@ namespace docxParsingUI
         /// </summary>
         private void recupererDonneesExcel(string chemin)
         {
-
             using (var stream = File.Open(chemin, FileMode.Open, FileAccess.Read))
             {
                 using (var reader = ExcelReaderFactory.CreateReader(stream))
@@ -111,38 +109,6 @@ namespace docxParsingUI
         /// </summary>
         private void boutonGenerer_Click(object sender, EventArgs e)
         {
-            fichierModele = sourceModele.Text;
-            fichierDestination = sourceDestination.Text;
-            fichierDonnees = sourceDonnees.Text;
-            if (String.IsNullOrEmpty(fichierDonnees))
-            {
-                MessageBox.Show("Le champ du fichier de données est vide.", "Le champ du fichier de données est vide.", MessageBoxButtons.OK);
-                return;
-            }
-            else if (String.IsNullOrEmpty(fichierModele))
-            {
-                MessageBox.Show("Le champ du fichier modèle est vide.", "Le champ du fichier modèle est vide.", MessageBoxButtons.OK);
-                return;
-            }
-
-            else if (String.IsNullOrEmpty(fichierDestination))
-            {
-                MessageBox.Show("Le champ du fichier de destination est vide.", "Le champ du fichier destination est vide.", MessageBoxButtons.OK);
-                return;
-            }
-
-
-            if (!File.Exists(fichierModele))
-            {
-                MessageBox.Show("Le fichier modèle n' existe pas.", "Le fichier modèle n' existe pas.", MessageBoxButtons.OK);
-                return;
-            }
-            else if (!File.Exists(fichierDonnees))
-            {
-                MessageBox.Show("Le fichier de données n' existe pas.", "Le fichier de données n' existe pas.", MessageBoxButtons.OK);
-                return;
-            }
-
             genererLC();
         }
 
@@ -183,24 +149,25 @@ namespace docxParsingUI
         /// </summary>
         private void genererLC()
         {
-
             fichierModele = sourceModele.Text;
             fichierDestination = sourceDestination.Text;
             fichierDonnees = sourceDonnees.Text;
 
-            
-            
             recupererDonneesExcel(fichierDonnees);
-
-            
-
 
             DocX documentModele = DocX.Load(fichierModele);
 
             foreach(var item in donnees)
             {
-                //documentModele.ReplaceText("{{(.*?)}}", ChercheValeur, false, RegexOptions.IgnoreCase | RegexOptions.Multiline, new Formatting(), new Formatting(), MatchFormattingOptions.SubsetMatch);
-                documentModele.ReplaceText("{{" + item.Key + "}}", item.Value);
+                //documentModele.ReplaceText("{{(.*?)}}", ChercheValeur, false, RegexOptions.IgnoreCase, new Formatting(), new Formatting(), MatchFormattingOptions.SubsetMatch);
+                if (item.Key == "DateCourante" || item.Key == "DateImmatriculation") {
+                    documentModele.ReplaceText("{{" + item.Key + "}}", item.Value.Substring(0, 10));
+
+                }
+                else
+                {
+                    documentModele.ReplaceText("{{" + item.Key + "}}", item.Value);
+                }
             }
 
             documentModele.SaveAs(fichierDestination);
@@ -235,11 +202,6 @@ namespace docxParsingUI
                 return donnees[key];
             }
             return key;
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
         }
     }
 }

@@ -1,0 +1,14 @@
+C:\Users\abdourad\Source\Repos\lot0\docxParsingUI\obj\Debug\docxParsingUI.csprojResolveAssemblyReference.cache
+C:\Users\abdourad\Source\Repos\lot0\docxParsingUI\obj\Debug\docxParsingUI.Form1.resources
+C:\Users\abdourad\Source\Repos\lot0\docxParsingUI\obj\Debug\docxParsingUI.Properties.Resources.resources
+C:\Users\abdourad\Source\Repos\lot0\docxParsingUI\obj\Debug\docxParsingUI.csproj.GenerateResource.Cache
+C:\Users\abdourad\Source\Repos\lot0\docxParsingUI\bin\Debug\docxParsingUI.exe.config
+C:\Users\abdourad\Source\Repos\lot0\docxParsingUI\bin\Debug\docxParsingUI.exe
+C:\Users\abdourad\Source\Repos\lot0\docxParsingUI\bin\Debug\docxParsingUI.pdb
+C:\Users\abdourad\Source\Repos\lot0\docxParsingUI\bin\Debug\ExcelDataReader.DataSet.dll
+C:\Users\abdourad\Source\Repos\lot0\docxParsingUI\bin\Debug\ExcelDataReader.dll
+C:\Users\abdourad\Source\Repos\lot0\docxParsingUI\bin\Debug\Xceed.Words.NET.dll
+C:\Users\abdourad\Source\Repos\lot0\docxParsingUI\bin\Debug\ExcelDataReader.xml
+C:\Users\abdourad\Source\Repos\lot0\docxParsingUI\bin\Debug\ExcelDataReader.DataSet.xml
+C:\Users\abdourad\Source\Repos\lot0\docxParsingUI\obj\Debug\docxParsingUI.exe
+C:\Users\abdourad\Source\Repos\lot0\docxParsingUI\obj\Debug\docxParsingUI.pdb
