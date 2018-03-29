@@ -1,49 +1,88 @@
 ﻿using ExcelDataReader;
+using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Xceed.Words.NET;
 
-namespace docxParsingUI
+namespace lot1
 {
     public partial class Form1 : Form
     {
-        /// <summary>
-        /// Contient le chemin du fichier de modèle LC
-        /// </summary>
-        private string fichierModele;
-
-        /// <summary>
-        /// Contient le chemin du fichier avec les informations sur l'entreprise du client
-        /// </summary>
-        private string fichierDonnees;
-
-        /// <summary>
-        /// Contient le chemin du fichier de destination
-        /// </summary>
-        private string fichierDestination;
-
-        /// <summary>
-        /// Les informations du client y sont stockées 
-        /// </summary>
-        private Dictionary<string, string> donnees = new Dictionary<string, string>();
-
+        private HttpClient client = new HttpClient();
+        private AutoCompleteStringCollection villes = new AutoCompleteStringCollection();
         public Form1()
         {
             InitializeComponent();
+            date.Value = DateTime.Now;
         }
-        /// <summary>
-        /// Ouvre une boîte de dialogue pour sélectionner le fichier de données client
-        /// </summary>
-        private void parcourirSourceDonnees_Click(object sender, EventArgs e)
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            tabControl1.SelectTab(tabControl1.SelectedIndex + 1);
+        }
+
+        private async void cp_TextChanged(object sender, EventArgs e)
+        {
+            if(cp.Text == "")
+            {
+                ville.Items.Clear();
+            }
+
+            if(cp.Text.Length == 5)
+            {
+                HttpResponseMessage reponse = await client.GetAsync("https://geo.api.gouv.fr/communes?codePostal=" + cp.Text);
+                string json = await reponse.Content.ReadAsStringAsync();
+                //WebClient test = new WebClient();
+                //string json = test.DownloadString("https://geo.api.gouv.fr/communes?codePostal=" + cp.Text);
+                List<Ville> listeVilles = JsonConvert.DeserializeObject<List<Ville>>(json);
+                foreach (var item in listeVilles)
+                {
+                    //villes.Add(item.nom.ToUpper());
+                    ville.Items.Add(item.nom.ToUpper());
+                }
+                //ville.Items.
+                /*ville.AutoCompleteCustomSource = villes;
+                ville.AutoCompleteMode = AutoCompleteMode.Suggest;
+                ville.AutoCompleteSource = AutoCompleteSource.CustomSource;*/
+                ville.SelectedIndex = 0;
+
+            }
+        }
+
+        private async void ville_TextChangedAsync(object sender, EventArgs e)
+        {
+            /*if(ville.Text.Length > 4)
+            {
+                HttpResponseMessage reponse = await client.GetAsync("https://geo.api.gouv.fr/communes?nom=" + ville.Text);
+                string json = await reponse.Content.ReadAsStringAsync();
+                List<Commune> listeCommunes = JsonConvert.DeserializeObject<List<Commune>>(json);
+                foreach (var item in listeCommunes)
+                {
+                    villes.Add(item.nom.ToUpper());
+                }
+
+                ville.AutoCompleteCustomSource = villes;
+                ville.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                ville.AutoCompleteSource = AutoCompleteSource.CustomSource;
+            }*/
+        }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            chargerdonnees();
+            
+        }
+        private void chargerdonnees()
         {
             OpenFileDialog ouvrirSourceDonnees = new OpenFileDialog();
             ouvrirSourceDonnees.Filter = "Documents Excel (*.xlsx)|*.xlsx";
@@ -51,195 +90,61 @@ namespace docxParsingUI
 
             if (ouvrirSourceDonnees.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                sourceDonnees.Text = ouvrirSourceDonnees.FileName;
-            }
-
-        }
-
-        /// <summary>
-        /// Ouvre une boîte de dialogue pour sélectionner le fichier de modèle LC
-        /// </summary>
-        private void parcourirModele_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog ouvrirModele = new OpenFileDialog();
-            ouvrirModele.Filter = "Documents Word (*.docx)|*.docx";
-            ouvrirModele.Title = "Sélectionner un modèle";
-
-            if (ouvrirModele.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                sourceModele.Text = ouvrirModele.FileName;
-            }
-        }
-
-        /// <summary>
-        /// Ouvre une boîte de dialogue pour sélectionner le fichier de destination et le créer s'il n'existe pas
-        /// </summary>
-        private void parcourirDestination_Click(object sender, EventArgs e)
-        {
-            SaveFileDialog ouvrirDestination = new SaveFileDialog();
-            ouvrirDestination.Filter = "Documents Word (*.docx)|*.docx";
-            ouvrirDestination.Title = "Sélectionner un fichier de destination";
-
-            if (ouvrirDestination.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                sourceDestination.Text = ouvrirDestination.FileName;
-            }
-        }
-
-        /// <summary>
-        /// Extrait les données du fichier client
-        /// </summary>
-        private void recupererDonneesExcel(string chemin)
-        {
-
-            using (var stream = File.Open(chemin, FileMode.Open, FileAccess.Read))
-            {
-                using (var reader = ExcelReaderFactory.CreateReader(stream))
+                using (var stream = File.Open(ouvrirSourceDonnees.FileName, FileMode.Open, FileAccess.Read))
                 {
-                    var result = reader.AsDataSet();
-                    var spreadsheet = result.Tables[0];
-                    for (int i = 0; i < spreadsheet.Rows.Count; i++)
+                    using (var reader = ExcelReaderFactory.CreateReader(stream))
                     {
-                        donnees.Add(spreadsheet.Rows[i][0].ToString(), spreadsheet.Rows[i][1].ToString());
+                        var result = reader.AsDataSet();
+                        var spreadsheet = result.Tables[0];
+                        for (int i = 0; i < spreadsheet.Columns.Count; i++)
+                        {
+                            //MessageBox.Show(spreadsheet.Rows[0][i].ToString(), spreadsheet.Rows[0][0].ToString());
+
+                            nom.Text = spreadsheet.Rows[1][3].ToString();
+
+                            prenom.Text = spreadsheet.Rows[1][4].ToString();
+
+
+                            fonction.Text = spreadsheet.Rows[1][5].ToString();
+
+
+                            textBox1.Text = spreadsheet.Rows[1][6].ToString();
+                            numericUpDown1.Text = spreadsheet.Rows[1][7].ToString();
+                            textBox2.Text = spreadsheet.Rows[1][8].ToString();
+                            numericUpDown2.Text = spreadsheet.Rows[1][9].ToString();
+
+
+
+                        }
                     }
                 }
             }
         }
 
-        /// <summary>
-        /// Génère la LC
-        /// </summary>
-        private void boutonGenerer_Click(object sender, EventArgs e)
+        private void ouvrirUnFichierClientToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            fichierModele = sourceModele.Text;
-            fichierDestination = sourceDestination.Text;
-            fichierDonnees = sourceDonnees.Text;
-            if (String.IsNullOrEmpty(fichierDonnees))
-            {
-                MessageBox.Show("Le champ du fichier de données est vide.", "Le champ du fichier de données est vide.", MessageBoxButtons.OK);
-                return;
-            }
-            else if (String.IsNullOrEmpty(fichierModele))
-            {
-                MessageBox.Show("Le champ du fichier modèle est vide.", "Le champ du fichier modèle est vide.", MessageBoxButtons.OK);
-                return;
-            }
-
-            else if (String.IsNullOrEmpty(fichierDestination))
-            {
-                MessageBox.Show("Le champ du fichier de destination est vide.", "Le champ du fichier destination est vide.", MessageBoxButtons.OK);
-                return;
-            }
-
-
-            if (!File.Exists(fichierModele))
-            {
-                MessageBox.Show("Le fichier modèle n' existe pas.", "Le fichier modèle n' existe pas.", MessageBoxButtons.OK);
-                return;
-            }
-            else if (!File.Exists(fichierDonnees))
-            {
-                MessageBox.Show("Le fichier de données n' existe pas.", "Le fichier de données n' existe pas.", MessageBoxButtons.OK);
-                return;
-            }
-
-            genererLC();
+            chargerdonnees();
         }
+    }
 
-        /// <summary>
-        /// Efface les champs
-        /// </summary>
-        private void boutonEffacer_Click(object sender, EventArgs e)
-        {
-            effacerChamps();
-        }
+    public class Ville
+    {
+        public string nom { get; set; }
+        public string code { get; set; }
+        public string codeDepartement { get; set; }
+        public string codeRegion { get; set; }
+        public List<string> codesPostaux { get; set; }
+        public int population { get; set; }
+    }
 
-        /// <summary>
-        /// Génère la LC
-        /// </summary>
-        private void générerToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            genererLC();
-        }
-
-        /// <summary>
-        /// Efface  les champs
-        /// </summary>
-        private void effacerToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            effacerChamps();
-        }
-
-        /// <summary>
-        /// Permet de quitter l'application
-        /// </summary>
-        private void quitterToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Application.Exit();
-        }
-
-        /// <summary> 
-        /// Fonction de génération d'une LC
-        /// </summary>
-        private void genererLC()
-        {
-
-            fichierModele = sourceModele.Text;
-            fichierDestination = sourceDestination.Text;
-            fichierDonnees = sourceDonnees.Text;
-
-            
-            
-            recupererDonneesExcel(fichierDonnees);
-
-            
-
-
-            DocX documentModele = DocX.Load(fichierModele);
-
-            foreach(var item in donnees)
-            {
-                //documentModele.ReplaceText("{{(.*?)}}", ChercheValeur, false, RegexOptions.IgnoreCase | RegexOptions.Multiline, new Formatting(), new Formatting(), MatchFormattingOptions.SubsetMatch);
-                documentModele.ReplaceText("{{" + item.Key + "}}", item.Value);
-            }
-
-            documentModele.SaveAs(fichierDestination);
-
-            MessageBox.Show("La lettre de coopération a été générée dans le fichier " + fichierDestination, "Lettre générée", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            statut.Text = "La lettre de coopération a été générée dans " + fichierDestination;
-
-            donnees.Clear();
-        }
-
-        /// <summary>
-        /// Affiche une boîte de dialogue et efface les champs
-        /// </summary>
-        private void effacerChamps()
-        {
-            if (MessageBox.Show("Voulez-vous vraiment effacer tous les champs ?", "Confirmation",
-       MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-            {
-                sourceDonnees.Clear();
-                sourceModele.Clear();
-                sourceDestination.Clear();
-            }
-        }
-
-        /// <summary>
-        /// Récupère une valeur du Dictionnary en fonction de la clé
-        /// </summary>
-        private string ChercheValeur(string key)
-        {
-            if(donnees.ContainsKey(key))
-            {
-                return donnees[key];
-            }
-            return key;
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-        }
+    public class Commune
+    {
+        public string nom { get; set; }
+        public string code { get; set; }
+        public string codeDepartement { get; set; }
+        public string codeRegion { get; set; }
+        public List<string> codesPostaux { get; set; }
+        public int population { get; set; }
+        public double _score { get; set; }
     }
 }
