@@ -91,6 +91,7 @@ namespace docxParsingUI
         /// </summary>
         private void recupererDonneesExcel(string chemin)
         {
+
             using (var stream = File.Open(chemin, FileMode.Open, FileAccess.Read))
             {
                 using (var reader = ExcelReaderFactory.CreateReader(stream))
@@ -110,6 +111,38 @@ namespace docxParsingUI
         /// </summary>
         private void boutonGenerer_Click(object sender, EventArgs e)
         {
+            fichierModele = sourceModele.Text;
+            fichierDestination = sourceDestination.Text;
+            fichierDonnees = sourceDonnees.Text;
+            if (String.IsNullOrEmpty(fichierDonnees))
+            {
+                MessageBox.Show("Le champ du fichier de données est vide.", "Le champ du fichier de données est vide.", MessageBoxButtons.OK);
+                return;
+            }
+            else if (String.IsNullOrEmpty(fichierModele))
+            {
+                MessageBox.Show("Le champ du fichier modèle est vide.", "Le champ du fichier modèle est vide.", MessageBoxButtons.OK);
+                return;
+            }
+
+            else if (String.IsNullOrEmpty(fichierDestination))
+            {
+                MessageBox.Show("Le champ du fichier de destination est vide.", "Le champ du fichier destination est vide.", MessageBoxButtons.OK);
+                return;
+            }
+
+
+            if (!File.Exists(fichierModele))
+            {
+                MessageBox.Show("Le fichier modèle n' existe pas.", "Le fichier modèle n' existe pas.", MessageBoxButtons.OK);
+                return;
+            }
+            else if (!File.Exists(fichierDonnees))
+            {
+                MessageBox.Show("Le fichier de données n' existe pas.", "Le fichier de données n' existe pas.", MessageBoxButtons.OK);
+                return;
+            }
+
             genererLC();
         }
 
@@ -150,11 +183,17 @@ namespace docxParsingUI
         /// </summary>
         private void genererLC()
         {
+
             fichierModele = sourceModele.Text;
             fichierDestination = sourceDestination.Text;
             fichierDonnees = sourceDonnees.Text;
 
+            
+            
             recupererDonneesExcel(fichierDonnees);
+
+            
+
 
             DocX documentModele = DocX.Load(fichierModele);
 
