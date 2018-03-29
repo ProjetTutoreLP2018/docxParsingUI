@@ -35,6 +35,7 @@ namespace docxParsingUI
         /// Les informations du client y sont stockées 
         /// </summary>
         private Dictionary<string, string> donnees = new Dictionary<string, string>();
+
         public Form1()
         {
             InitializeComponent();
@@ -159,7 +160,7 @@ namespace docxParsingUI
 
             foreach(var item in donnees)
             {
-                //documentModele.ReplaceText("{{(.*?)}}", ChercheValeur, false, RegexOptions.IgnoreCase, new Formatting(), new Formatting(), MatchFormattingOptions.SubsetMatch);
+                //documentModele.ReplaceText("{{(.*?)}}", ChercheValeur, false, RegexOptions.IgnoreCase | RegexOptions.Multiline, new Formatting(), new Formatting(), MatchFormattingOptions.SubsetMatch);
                 documentModele.ReplaceText("{{" + item.Key + "}}", item.Value);
             }
 
