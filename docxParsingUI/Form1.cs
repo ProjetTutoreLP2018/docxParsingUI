@@ -159,7 +159,6 @@ namespace docxParsingUI
 
             foreach(var item in donnees)
             {
-                //documentModele.ReplaceText("{{(.*?)}}", ChercheValeur, false, RegexOptions.IgnoreCase, new Formatting(), new Formatting(), MatchFormattingOptions.SubsetMatch);
                 if (item.Key == "DateCourante" || item.Key == "DateImmatriculation") {
                     documentModele.ReplaceText("{{" + item.Key + "}}", item.Value.Substring(0, 10));
 
