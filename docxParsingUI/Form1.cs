@@ -161,7 +161,6 @@ namespace docxParsingUI
             {
                 if (item.Key == "DateCourante" || item.Key == "DateImmatriculation") {
                     documentModele.ReplaceText("{{" + item.Key + "}}", item.Value.Substring(0, 10));
-
                 }
                 else
                 {
