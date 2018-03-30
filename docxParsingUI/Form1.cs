@@ -153,6 +153,22 @@ namespace docxParsingUI
             fichierDestination = sourceDestination.Text;
             fichierDonnees = sourceDonnees.Text;
 
+            if (String.IsNullOrEmpty(fichierDonnees))
+            {
+                MessageBox.Show("Veuillez indiquer le chemin du fichier des données client", "Champ vide", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            if (String.IsNullOrEmpty(fichierModele))
+            {
+                MessageBox.Show("Veuillez indiquer le chemin du fichier du modèle", "Champ vide", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            if (String.IsNullOrEmpty(fichierModele))
+            {
+                MessageBox.Show("Veuillez indiquer le chemin du fichier de destination", "Champ vide", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             recupererDonneesExcel(fichierDonnees);
 
             DocX documentModele = DocX.Load(fichierModele);
